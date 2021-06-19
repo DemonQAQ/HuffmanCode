@@ -55,7 +55,7 @@ struct huffmancode					//ºÕ·òÂü±àÂë½Úµã
 //-------------------FUNCTION_START------------------------------
 
 int char_check(char* string);
-int scanf_num(TYPE_INPUT_NUM* num, double max, double min);
+int scanf_num(TYPE_INPUT_NUM* num, TYPE_INPUT_NUM max, TYPE_INPUT_NUM min);
 char* string_check(char* string);
 char* huffmamtree_rebuild(huffmancode* code);
 char* codestring(huffmancode* code, char* string, ftable* head);
