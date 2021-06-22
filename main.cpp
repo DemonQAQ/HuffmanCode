@@ -1,8 +1,7 @@
 #include "function.h"
-int main() 
+int main()
 {
-	int i = 0;
-	scanf_num(&i, 0, 100);
-	printf("%d", i);
+	int length = 0;
+	huffmancode* code = input_code_list_keybroad(&length);
 	return 0;
 }
