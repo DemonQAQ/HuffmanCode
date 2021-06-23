@@ -142,79 +142,86 @@ int find_queue_min(btree** queue, int length)
 btree* huffmantree(ftable* head, int length)
 {
 	ftable* min_temp = NULL;//存放频度表最小值
-	btree* root = (btree*)malloc(sizeof(btree));//赫夫曼树根
 	btree* root_temp = NULL;//临时根节点
 	int min_index = 0;//存放队列查找到的下标
+	btree* root = (btree*)malloc(sizeof(btree));//赫夫曼树根
 	if (!root)exit(-1);
-	root->index = -1;
-	root->left = NULL;
-	root->right = NULL;
-
-	int ftable_length = 0, qhead = 0, qrear = 0, i = 0;//队头,队尾,初始点
-	ftable* p_temp = head;
-	ftable_length = length;//频度表长
-	if (ftable_length < 0)return NULL;
-	else if (ftable_length == 1)
-	{
-		root->c = head->c;
-		root->left = NULL;
-		root->right = NULL;
-	}
 	else
 	{
-		ftable_length = 2 * ftable_length;
-		btree** queue = (btree**)malloc(ftable_length * sizeof(btree*));
-		if (!queue)exit(-1);
-		for (i = 0; i < ftable_length; i++)queue[i] = NULL;
+		root->index = -1;
+		root->left = NULL;
+		root->right = NULL;
 
-		while (head)//将频度表所有节点入队
+		int ftable_length = 0, qhead = 0, qrear = 0, i = 0;//队头,队尾,初始点
+		ftable* p_temp = head;
+		ftable_length = length;//频度表长
+		if (ftable_length < 0)return NULL;
+		else if (ftable_length == 1)
 		{
-			min_temp = delect(&head, min_temp);
-			root_temp = (btree*)malloc(sizeof(btree));
-			root_temp->c = min_temp->c;
-			root_temp->index = min_temp->index;
-			root_temp->left = NULL;
-			root_temp->right = NULL;
-			queue[qrear++] = root_temp;
+			root->c = head->c;
+			root->left = NULL;
+			root->right = NULL;
 		}
-		root->left = queue[qhead]; //合并初始根节点并入队
-		queue[qhead++] = NULL;
-		root->right = queue[qhead];
-		queue[qhead++] = NULL;
-		if (!root->left && !root->right)exit(-1);
-		else root->index = root->left->index + root->right->index;
-		queue[qrear++] = root;
-		while (check_queue(queue, ftable_length))//队空时退出
+		else
 		{
-			root_temp = (btree*)malloc(sizeof(btree));
-			if (!root_temp)exit(-1);
-			else
+			ftable_length = 2 * ftable_length;
+			btree** queue = (btree**)malloc(ftable_length * sizeof(btree*));
+			if (!queue)exit(-1);
+			for (i = 0; i < ftable_length; i++)queue[i] = NULL;
+
+			while (head)//将频度表所有节点入队
 			{
-				//两次查找最小值分别赋值给临时根的左右孩子
-				min_index = find_queue_min(queue, ftable_length);
-				if (min_index == -1)exit(-1);
+				min_temp = delect(&head, min_temp);
+				root_temp = (btree*)malloc(sizeof(btree));
+				if (!root_temp)exit(-1);
 				else
 				{
-					root_temp->left = queue[min_index];
-					queue[min_index] = NULL;
+					root_temp->c = min_temp->c;
+					root_temp->index = min_temp->index;
+					root_temp->left = NULL;
+					root_temp->right = NULL;
+					queue[qrear++] = root_temp;
 				}
-				min_index = find_queue_min(queue, ftable_length);
-				if (min_index == -1)exit(-1);
-				else
-				{
-					root_temp->right = queue[min_index];
-					queue[min_index] = NULL;
-				}
-
-				root_temp->index = root_temp->left->index + root_temp->right->index;
-				if (root_temp->left->left && root_temp->left->right)root_temp->left->index = -1;
-				if (root_temp->right->left && root_temp->right->right)root_temp->right->index = -1;
-				queue[qrear++] = root_temp;
 			}
+			root->left = queue[qhead]; //合并初始根节点并入队
+			queue[qhead++] = NULL;
+			root->right = queue[qhead];
+			queue[qhead++] = NULL;
+			if (!root->left && !root->right)exit(-1);
+			else root->index = root->left->index + root->right->index;
+			queue[qrear++] = root;
+			while (check_queue(queue, ftable_length))//队空时退出
+			{
+				root_temp = (btree*)malloc(sizeof(btree));
+				if (!root_temp)exit(-1);
+				else
+				{
+					//两次查找最小值分别赋值给临时根的左右孩子
+					min_index = find_queue_min(queue, ftable_length);
+					if (min_index == -1)exit(-1);
+					else
+					{
+						root_temp->left = queue[min_index];
+						queue[min_index] = NULL;
+					}
+					min_index = find_queue_min(queue, ftable_length);
+					if (min_index == -1)exit(-1);
+					else
+					{
+						root_temp->right = queue[min_index];
+						queue[min_index] = NULL;
+					}
+
+					root_temp->index = root_temp->left->index + root_temp->right->index;
+					if (root_temp->left->left && root_temp->left->right)root_temp->left->index = -1;
+					if (root_temp->right->left && root_temp->right->right)root_temp->right->index = -1;
+					queue[qrear++] = root_temp;
+				}
+			}
+			//取出队列中最后一个元素，该元素即为生成的树根
+			min_index = find_queue_min(queue, ftable_length);
+			root = queue[min_index];
 		}
-		//取出队列中最后一个元素，该元素即为生成的树根
-		min_index = find_queue_min(queue, ftable_length);
-		root = queue[min_index];
 	}
 	return root;
 }
@@ -368,4 +375,3 @@ int* codestring(huffmancode* code, char* string, int length)
 	}
 	return result_code;
 }
-

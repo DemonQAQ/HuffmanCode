@@ -149,7 +149,6 @@ void tree_display(btree* root, int ident)
 	{
 		return;
 	}
-
 	vec_left[ident] = 1;
 	tree_display(root->left, ident + 1);
 	vec_left[ident] = 0;
@@ -204,7 +203,7 @@ next_check:
 						flag = false;
 					index++;
 				}
-				if (flag)return 0;
+				if (flag&&string_temp[index]<0)return 0;
 			}
 		}
 	}

@@ -59,7 +59,7 @@ int scanf_num(TYPE_INPUT_NUM* num, TYPE_INPUT_NUM max, TYPE_INPUT_NUM min);
 int check_code_list(huffmancode* code, int num);
 int* write_to_result_code(int* result_code, int* string, int* r_index);
 char* string_check(char* string);
-char* huffmamtree_rebuild(huffmancode* code);
+btree* huffmamtree_rebuild(huffmancode* code, int length);
 int* codestring(huffmancode* code, char* string, int length);
 char* huffmandecode(btree* root, char* string);
 char* file_name(char* name);
