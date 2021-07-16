@@ -7,6 +7,8 @@
 // 时间：2021.6.19
 //----------------------------------------------------------------*/
 #include "function.h"
+
+//根据输入的编码表重建赫夫曼树
 btree* huffmamtree_rebuild(huffmancode* code, int length)
 {
 	int i = 0, j = 0;
@@ -66,4 +68,47 @@ btree* huffmamtree_rebuild(huffmancode* code, int length)
 		}
 	}
 	return root;
+}
+
+//译码
+char* huffmandecode(btree* root, char* string)
+{
+	if (!root)return NULL;
+	int i = 0, j = 0, length = 0;
+	length = strlen(string);
+	btree* temp_root = root;
+	char* decode_string = (char*)malloc(sizeof(char));
+	if (!decode_string)exit(-1);
+	else
+	{
+		for (i = 0; i < length; i++)decode_string[i] = 0;
+		for (i = 0; i < length; i++)
+		{
+			if (string[i] == '0')
+			{
+				if (temp_root->left)temp_root = temp_root->left;
+				else 
+				{
+					printf("[错误]:未找到编码对应字符，请检查输入的待译串和编码表\n");
+					exit(-2);
+				}
+				if (!temp_root->left && !temp_root->right) 
+				{
+					decode_string[j++] = temp_root->c;
+					temp_root = root;
+				}
+			}
+			if (string[i] == '1')
+			{
+				if (temp_root->right)temp_root = temp_root->right;
+				else exit(-2);
+				if (!temp_root->left && !temp_root->right)
+				{
+					decode_string[j++] = temp_root->c;
+					temp_root = root;
+				}
+			}
+		}
+		return decode_string;
+	}
 }

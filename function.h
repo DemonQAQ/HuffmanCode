@@ -21,8 +21,8 @@
 #define NORMAL_NUM 128
 #define NORMAL_MAX 128
 #define NORMAL_MIN 0
-#define STRING_MAX_NUM 20000	
-#define TRIGGER_NUM 10000
+#define STRING_MAX_NUM 5000	
+#define TRIGGER_NUM 4000
 #define TYPE_INPUT_NUM int
 
 //-------------------DEFINE_END------------------------------------
@@ -53,28 +53,32 @@ struct huffmancode					//ºÕ·òÂü±àÂë½Úµã
 //-------------------STRUCT_END----------------------------------
 
 //-------------------FUNCTION_START------------------------------
-void tree_display(btree* root, int ident);
 int char_check(char* string);
+int check_codestring_input(char* string);
 int scanf_num(TYPE_INPUT_NUM* num, TYPE_INPUT_NUM max, TYPE_INPUT_NUM min);
 int check_code_list(huffmancode* code, int num);
-int* write_to_result_code(int* result_code, int* string, int* r_index);
-char* string_check(char* string);
-btree* huffmamtree_rebuild(huffmancode* code, int length);
 int* codestring(huffmancode* code, char* string, int length);
+int* write_to_result_code(int* result_code, int* string, int* r_index);
+char* decodestring_input_keyboard(char* codestring_in);
+char* file_input_decodestring();
+char* string_check(char* string);
+char* file_input_string();
 char* huffmandecode(btree* root, char* string);
 char* file_name(char* name);
-void display_codelist();
-void display_codestring();
-void file_codelist();
-void file_codestring();
-void display_decodestring();
-void file_decodestring();
+char* string_input_keyboard();
+void display_codelist(huffmancode* code, int length);
+void tree_display(btree* root, int ident);
+void display_codestring(int* string);
+void file_codelist(huffmancode* code, int length);
+void file_codestring(int* string);
+void display_decodestring(char* string);
+void file_decodestring(char* string);
+void coding(btree** root_, huffmancode** code_, int* i, int* j, int* c_flag);
 void flash();
-btree* coding(btree** root, huffmancode** code, int* i, int* j,int* c_flag);
+btree* huffmamtree_rebuild(huffmancode* code, int length);
 btree* huffmantree(ftable* head, int length);
 ftable* copy_ftable(ftable* head);
 ftable* create_frequencytable(char* string, int* table_length);
-huffmancode* build_huffmancode(int* table_length);
 huffmancode* code_create_list(btree* root, int length);
 huffmancode* input_code_list_keybroad(int* table_length);
 huffmancode* input_code_list_file(int* table_length);

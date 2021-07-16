@@ -146,6 +146,14 @@ btree* huffmantree(ftable* head, int length)
 	int min_index = 0;//存放队列查找到的下标
 	btree* root = (btree*)malloc(sizeof(btree));//赫夫曼树根
 	if (!root)exit(-1);
+	else if (head->next==NULL) 
+	{
+		root->index = 1;
+		root->c = head->c;
+		root->left = NULL;
+		root->right = NULL;
+		return root;
+	}
 	else
 	{
 		root->index = -1;
@@ -213,8 +221,8 @@ btree* huffmantree(ftable* head, int length)
 					}
 
 					root_temp->index = root_temp->left->index + root_temp->right->index;
-					if (root_temp->left->left && root_temp->left->right)root_temp->left->index = -1;
-					if (root_temp->right->left && root_temp->right->right)root_temp->right->index = -1;
+					if(root_temp->left->left||root_temp->left->right)root_temp->left->index = -1;
+					if (root_temp->right->left || root_temp->right->right)root_temp->right->index = -1;
 					queue[qrear++] = root_temp;
 				}
 			}
@@ -258,78 +266,35 @@ huffmancode* code_create_list(btree* root, int length)
 c_flag为结束条件，c_flag为1时表明此次编码已生成完毕，退出所有递归
 flag为完成左访问标记，完成左访问后进行右访问需要更新编码的值
 */
-btree* coding(btree** root_, huffmancode** code_, int* i, int* j, int* c_flag)
+void coding(btree** root_, huffmancode** code_, int* i, int* j, int* c_flag)
 {
 	btree* root = *root_;
-	bool flag = false;
-	if (!root)return NULL;
-	else
+	huffmancode* code = *code_;
+	if (!root)return;
+	if (!root->left && !root->right)//访问叶子节点
 	{
-		huffmancode* code = *code_;
-		if (!root->left && !root->right)//访问叶子节点
+		if (root->index == 0) return;
+		else if (root->index > 0)
 		{
 			code[*i].c = root->c;
 			root->index = 0;
 			*c_flag = 1;
-			goto end;
-		}
-		if (root->left->index == -1)//左访问非叶子节点
-		{
-			code[*i].string[(*j)++] = 0;
-			coding(&root->left, code_, i, j, c_flag);
-			flag = true;
-			if (c_flag)goto end;
-		}
-		if (root->left->index > 0)//访问左叶子
-		{
-			code[*i].string[(*j)++] = 0;
-			coding(&root->left, code_, i, j, c_flag);
-			if (c_flag)goto end;
-		}
-		if (root->right->index == -1)//右访问非叶子节点
-		{
-			if (flag)
-			{
-				(*j)--;
-				code[*i].string[(*j)++] = 1;
-			}
-			else code[*i].string[(*j)++] = 1;
-			coding(&root->right, code_, i, j, c_flag);
-			if (c_flag)goto end;
-		}
-		if (root->right->index > 0)//访问右叶子
-		{
-			if (flag)
-			{
-				(*j)--;
-				code[*i].string[(*j)++] = 1;
-			}
-			else code[*i].string[(*j)++] = 1;
-			coding(&root->right, code_, i, j, c_flag);
-			if (c_flag)goto end;
+			return;
 		}
 	}
-end:
-	return root;
-}
-
-huffmancode* build_huffmancode(int* table_length)
-{
-	char string[NORMAL_NUM];
-	ftable* table_head = NULL;
-	ftable* table_temp = NULL;
-	btree* root = NULL;
-	huffmancode* code = NULL;
-	do
+	code[*i].string[(*j)++] = 0;
+	coding(&root->left, code_, i, j, c_flag);
+	if (*c_flag == 1)goto end;
+	else
 	{
-		scanf("%s", string);
-		if (!(char_check(string)))flash();
-	} while (char_check(string));
-	table_head = create_frequencytable(string, table_length);
-	table_temp = copy_ftable(table_head);
-	root = huffmantree(table_temp, *table_length);
-	code = code_create_list(root, *table_length);
-	return code;
+		code[*i].string[(*j) - 1] = 1;
+		coding(&root->right, code_, i, j, c_flag);
+		if (*c_flag == 1)goto end;
+	}
+	code[*i].string[((*j) - 1)] = -8245;
+	(*j)--;
+end:
+	return;
 }
 
 //将编码写入数组
